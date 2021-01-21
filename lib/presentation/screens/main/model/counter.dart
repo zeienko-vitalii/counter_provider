@@ -7,32 +7,54 @@ class Counter with ChangeNotifier {
   FireStoreCounter get count => _count;
   FireStoreCounter _count;
 
+  bool get isError => _isError;
+  bool _isError = false;
   final DataSource _dataSource = FireStoreImpl();
 
   Future<void> init() async {
-    _count = await _dataSource.getCounter();
+    try {
+      _count = await _dataSource.getCounter();
+      _updateIsError(false);
+    } catch (ex) {
+      _updateIsError(true);
+    }
     notifyListeners();
   }
 
   Future<void> increment() async {
+    if (_count == null) return;
     final FireStoreCounter incremented = FireStoreCounter(
       id: _count.id,
-      count: _count?.count == null ? null : (_count.count + 1),
+      count: _count.count == null ? null : (_count.count + 1),
     );
-    await _dataSource.updateCounter(incremented);
-    _count = incremented;
+    try {
+      _count = await _dataSource.updateCounter(incremented);
+      _updateIsError();
+    } catch (ex) {
+      _updateIsError(true);
+    }
     notifyListeners();
   }
 
   Future<void> decrement() async {
-    if (_count?.isAboveZero ?? false) {
+    if (_count == null) return;
+    if (_count.isAboveZero) {
       final FireStoreCounter decremented = FireStoreCounter(
         id: _count.id,
-        count: _count?.count == null ? null : (_count.count - 1),
+        count: _count.count == null ? null : (_count.count - 1),
       );
-      await _dataSource.updateCounter(decremented);
-      _count = decremented;
+      try {
+        _count = await _dataSource.updateCounter(decremented);
+        _updateIsError();
+      } catch (ex) {
+        _updateIsError(true);
+      }
+
       notifyListeners();
     }
+  }
+
+  void _updateIsError([bool isError = false]) {
+    _isError = isError;
   }
 }

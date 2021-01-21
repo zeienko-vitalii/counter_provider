@@ -3,24 +3,31 @@ import 'package:counter_provider/data/net/datasource/datasource.dart';
 import 'package:counter_provider/data/net/model/firestore_counter.dart';
 
 class FireStoreImpl extends DataSource {
-  final CollectionReference _counter = FirebaseFirestore.instance.collection('counter');
+  factory FireStoreImpl() => _singleton;
+
+  FireStoreImpl._();
+
+  final CollectionReference _counterCollectionReference = FirebaseFirestore.instance.collection('counter');
+  static final FireStoreImpl _singleton = FireStoreImpl._();
 
   @override
   Future<FireStoreCounter> getCounter() {
-    return _counter.get().then((QuerySnapshot value) {
-      print(value);
+    return _counterCollectionReference.get().then((QuerySnapshot value) {
+      // if there is no prev value - add initial counter
       if ((value?.size ?? 0) == 0) {
-        return _counter.add(FireStoreCounter(count: 0).toJson()).then((DocumentReference value) {
-          print(value);
-          return FireStoreCounter.copy(FireStoreCounter(id: value.id, count: 0));
-        });
+        final FireStoreCounter initialCounter = FireStoreCounter(count: 0);
+        return _counterCollectionReference.add(initialCounter.toJson()).then(
+              (DocumentReference value) => FireStoreCounter(id: value.id, count: 0),
+            );
       }
-      return FireStoreCounter.fromQueryDocumentSnapshot((value.docs?.isNotEmpty ?? false) ? value.docs[0] : null);
+      return FireStoreCounter.fromQueryDocumentSnapshot(
+        (value.docs?.isNotEmpty ?? false) ? value.docs[0] : null,
+      );
     });
   }
 
   @override
-  Future<void> updateCounter(FireStoreCounter counter) {
-    return _counter.doc(counter?.id).update(counter?.toJson()).then((_) {});
+  Future<FireStoreCounter> updateCounter(FireStoreCounter counter) {
+    return _counterCollectionReference.doc(counter?.id).update(counter?.toJson()).then((_) => counter);
   }
 }

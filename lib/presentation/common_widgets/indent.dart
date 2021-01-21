@@ -16,9 +16,3 @@ class Indent extends StatelessWidget {
         ),
       );
 }
-
-Widget loaderWidget() {
-  return const Center(
-    child: CupertinoActivityIndicator(),
-  );
-}

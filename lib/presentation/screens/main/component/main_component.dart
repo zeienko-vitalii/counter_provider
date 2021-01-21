@@ -1,5 +1,6 @@
 import 'package:counter_provider/data/net/model/firestore_counter.dart';
-import 'package:counter_provider/presentation/appearence/common_widgets/common_widgets.dart';
+import 'package:counter_provider/presentation/common_widgets/common_widgets.dart';
+import 'package:counter_provider/presentation/common_widgets/indent.dart';
 import 'package:counter_provider/presentation/screens/main/model/counter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -60,22 +61,23 @@ class Count extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final FireStoreCounter counter = context.watch<Counter>().count;
-    return (counter?.isEmpty ?? true)
-        ? loaderWidget()
-        : Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Text('You have pushed the button this many times:'),
-                Text(
-                  /// Calls `context.watch` to make [Count] rebuild when [Counter] changes.
-                  '${counter.count}',
-                  key: const Key('counterState'),
-                  style: Theme.of(context).textTheme.headline4,
+    final bool isError = context.watch<Counter>().isError;
+    return isError
+        ? error()
+        : (counter?.isEmpty ?? true)
+            ? loaderWidget()
+            : Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const Text('You have pushed the button this many times:'),
+                    Text(
+                      '${counter.count}',
+                      style: Theme.of(context).textTheme.headline4,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
+              );
   }
 }
