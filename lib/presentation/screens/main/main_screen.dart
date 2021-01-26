@@ -1,4 +1,3 @@
-import 'package:counter_provider/utils/screen_util/screen_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,7 +9,6 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    initScreenUtil(context);
     return ChangeNotifierProvider(
       create: (_) => Counter(),
       child: const MainComponent(),

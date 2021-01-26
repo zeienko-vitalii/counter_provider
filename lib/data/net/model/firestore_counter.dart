@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+/// Represents Counter entity
 class FireStoreCounter {
   FireStoreCounter({this.id, this.count});
 
@@ -16,11 +17,9 @@ class FireStoreCounter {
 
   bool get isEmpty => count == null;
 
-  bool get isNotEmpty => count != null;
+  bool get isNotEmpty => !isEmpty;
 
   bool get isAboveZero => isNotEmpty && count > 0;
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'count': count,
-      };
+  Map<String, dynamic> toJson() => <String, dynamic>{'count': count};
 }

@@ -1,6 +1,7 @@
 import 'package:counter_provider/presentation/screens/main/main_screen.dart';
 import 'package:flutter/material.dart';
 
+/// It provides [Routes.onGenerateRoute]
 class Routes {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     return _materialRouteToScreen(const MainScreen());

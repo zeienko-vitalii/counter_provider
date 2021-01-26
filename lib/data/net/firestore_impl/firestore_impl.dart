@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:counter_provider/data/net/datasource/datasource.dart';
 import 'package:counter_provider/data/net/model/firestore_counter.dart';
 
+/// Singleton class that implements [DataSource] interface using Firebase source
 class FireStoreImpl extends DataSource {
   factory FireStoreImpl() => _singleton;
 
@@ -20,9 +21,7 @@ class FireStoreImpl extends DataSource {
               (DocumentReference value) => FireStoreCounter(id: value.id, count: 0),
             );
       }
-      return FireStoreCounter.fromQueryDocumentSnapshot(
-        (value.docs?.isNotEmpty ?? false) ? value.docs[0] : null,
-      );
+      return FireStoreCounter.fromQueryDocumentSnapshot((value.docs?.isNotEmpty ?? false) ? value.docs[0] : null);
     });
   }
 
